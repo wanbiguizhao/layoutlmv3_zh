@@ -12,6 +12,6 @@ from .backbone import build_vit_fpn_backbone
 from .dataset_mapper import DetrDatasetMapper
 from .mycheckpointer import MyDetectionCheckpointer
 from .icdar_evaluation import ICDAREvaluator
-from .mytrainer import MyTrainer
+from .mytrainer import MyTrainer,DefaultPredictor
 from .table_evaluation import calc_table_score
 from .rcnn_vl import VLGeneralizedRCNN
