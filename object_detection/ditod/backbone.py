@@ -144,7 +144,7 @@ class LMV3_Backbone(Backbone):
         Returns:
             dict[str->Tensor]: names and the corresponding features
         """
-        #论文中没有加入text 嵌入的输入，未来要尝试加上
+        #论文中没有加入text 嵌入的输入，未来要尝试加上文本嵌入。
         return self.backbone.forward(
                 input_ids=x["input_ids"] if "input_ids" in x else None,
                 bbox=x["bbox"] if "bbox" in x else None,
