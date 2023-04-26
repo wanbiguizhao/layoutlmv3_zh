@@ -121,45 +121,6 @@ class VIT_Backbone(Backbone):
             for name in self._out_features
         }
 
-class LMV3_Backbone(Backbone):
-    """
-    基于Lmv3的backbone
-    """
-    def __init__(self, name, out_features, drop_path, img_size, pos_type, model_kwargs,
-                 config_path=None, image_only=False, cfg=None):
-        super().__init__()
-        # 使用的transforms的自动加载config。
-        config = AutoConfig.from_pretrained(config_path)
-            # disable relative bias as DiT
-        config.has_spatial_attention_bias = False
-        config.has_relative_attention_bias = False
-        self.backbone = LayoutLMv3Model(config, detection=True,
-                                            out_features=out_features, image_only=image_only)# 这是执行了detection=True
-        self.name=name
-    def forward(self, x):
-        """
-        Args:
-            x: Tensor of shape (N,C,H,W). H, W must be a multiple of ``self.size_divisibility``.
-
-        Returns:
-            dict[str->Tensor]: names and the corresponding features
-        """
-        #论文中没有加入text 嵌入的输入，未来要尝试加上文本嵌入。
-        return self.backbone.forward(
-                input_ids=x["input_ids"] if "input_ids" in x else None,
-                bbox=x["bbox"] if "bbox" in x else None,
-                images=x["images"] if "images" in x else None,
-                attention_mask=x["attention_mask"] if "attention_mask" in x else None,
-                # output_hidden_states=True,
-            )
-
-    def output_shape(self):
-        return {
-            name: ShapeSpec(
-                channels=self._out_feature_channels[name], stride=self._out_feature_strides[name]
-            )
-            for name in self._out_features
-        }
 def build_VIT_backbone(cfg):
     """
     Create a VIT instance from config.

@@ -7,13 +7,11 @@ from detectron2.layers import (
 from detectron2.modeling import Backbone, BACKBONE_REGISTRY, FPN
 from detectron2.modeling.backbone.fpn import LastLevelP6P7, LastLevelMaxPool
 
-from .beit import beit_base_patch16, dit_base_patch16, dit_large_patch16, beit_large_patch16
-from .deit import deit_base_patch16, mae_base_patch16
 from layoutlmft.models.layoutlmv3 import LayoutLMv3Model
 from transformers import AutoConfig
 
 __all__ = [
-    "build_vit_fpn_backbone",
+    "layoutlmv3_vit_fpn_backbone",
 ]
 
 
@@ -24,6 +22,9 @@ class LMV3_Backbone(Backbone):
     def __init__(self, name, out_features, drop_path, img_size, pos_type, model_kwargs,
                  config_path=None, image_only=False, cfg=None):
         super().__init__()
+        # 可以理解为硬编码
+        self._out_feature_strides = {"layer3": 4, "layer5": 8, "layer7": 16, "layer11": 32}
+        self._out_feature_channels = {"layer3": 768, "layer5": 768, "layer7": 768, "layer11": 768}
         # 使用的transforms的自动加载config。
         config = AutoConfig.from_pretrained(config_path)
             # disable relative bias as DiT
@@ -66,7 +67,7 @@ def build_VIT_backbone(cfg):
         cfg: a detectron2 CfgNode
 
     Returns:
-        A VIT backbone by lmv3
+        A VIT backbone by lmv3w
     """
     # fmt: off
     name = cfg.MODEL.VIT.NAME
@@ -87,3 +88,28 @@ def build_VIT_backbone(cfg):
 
     return LMV3_Backbone(name, out_features, drop_path, img_size, pos_type, model_kwargs,
                         config_path=config_path, image_only=cfg.MODEL.IMAGE_ONLY, cfg=cfg)
+
+
+@BACKBONE_REGISTRY.register()
+def layoutlmv3_vit_fpn_backbone(cfg, input_shape: ShapeSpec):
+    """
+    Create a VIT w/ FPN backbone.
+
+    Args:
+        cfg: a detectron2 CfgNode
+
+    Returns:
+        backbone (Backbone): backbone module, must be a subclass of :class:`Backbone`.
+    """
+    bottom_up = build_VIT_backbone(cfg)
+    in_features = cfg.MODEL.FPN.IN_FEATURES
+    out_channels = cfg.MODEL.FPN.OUT_CHANNELS# 这个值应该是默认的。
+    backbone = FPN(
+        bottom_up=bottom_up,
+        in_features=in_features,# 对应要从bottom_up中取出的layers
+        out_channels=out_channels,
+        norm=cfg.MODEL.FPN.NORM,
+        top_block=LastLevelMaxPool(),
+        fuse_type=cfg.MODEL.FPN.FUSE_TYPE,
+    )
+    return backbone
