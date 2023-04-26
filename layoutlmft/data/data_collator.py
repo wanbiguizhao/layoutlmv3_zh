@@ -59,7 +59,10 @@ class DataCollatorForKeyValueExtraction(DataCollatorMixin):
 
         images = None
         if "images" in features[0]:
-            images = torch.stack([torch.tensor(d.pop("images")) for d in features])
+            #To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  #images = torch.stack([torch.tensor(d.pop("images")) for d in features])
+            #images = torch.stack([torch.tensor(d.pop("images")) for d in features])
+            images = torch.stack([d.pop("images").clone().detach() for d in features])
             IMAGE_LEN = int(images.shape[-1] / 16) * int(images.shape[-1] / 16) + 1
 
         batch = self.tokenizer.pad(
