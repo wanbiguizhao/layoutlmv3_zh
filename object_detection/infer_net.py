@@ -92,6 +92,7 @@ def main(args):
 
     model = DefaultPredictor(cfg)
     res=model(image)
+    
     return res
 
 

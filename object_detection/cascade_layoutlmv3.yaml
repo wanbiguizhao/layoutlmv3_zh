@@ -1,5 +1,5 @@
 MODEL:
-  DEVICE: "cpu"
+  DEVICE: "cuda"
   MASK_ON: True
   IMAGE_ONLY: True
   META_ARCHITECTURE: "VLGeneralizedRCNN"

@@ -69,7 +69,7 @@ MODEL:
     FREEZE_AT: 2
     NAME: build_vit_fpn_backbone
   CONFIG_PATH: ''
-  DEVICE: cpu
+  DEVICE: cuda
   FPN:
     FUSE_TYPE: sum
     IN_FEATURES:
@@ -291,7 +291,7 @@ MODEL:
     POS_TYPE: abs
   WEIGHTS: /home/liukun/ms/layoutlmv3-base-finetuned-publaynet/model_final.pth
 OUTPUT_DIR: output
-PUBLAYNET_DATA_DIR_TEST: /media/liukun/7764-4284/ai/publaynet/val
+PUBLAYNET_DATA_DIR_TEST: /path/to/data/PubLayNet/publaynet/val
 PUBLAYNET_DATA_DIR_TRAIN: /path/to/data/PubLayNet/publaynet/train
 SEED: 42
 SOLVER:
