@@ -3,6 +3,7 @@
 import logging
 import os
 import sys
+#
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -25,7 +26,7 @@ from transformers import (
 )
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
 from transformers.utils import check_min_version
-from layoutlmft.models.layoutlmv3.modeling_layoutlmv3 import LayoutLMv3Model
+
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 check_min_version("4.5.0")
 
@@ -145,20 +146,23 @@ class DataTrainingArguments:
         default='lanczos', metadata={"help": "Interpolation for discrete vae (random, bilinear, bicubic)"})
     imagenet_default_mean_and_std: bool = field(default=False, metadata={"help": ""})
 
+@dataclass
+class ZHTrainingArguments(TrainingArguments):
+    no_cuda: bool = field(default=True, metadata={"help": "Do not use CUDA even when it is available"})
+
 
 def main():
     # See all possible arguments in layoutlmft/transformers/training_args.py
     # or by passing the --help flag to this script.
     # We now keep distinct sets of args, for a cleaner separation of concerns.
 
-    parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
+    parser = HfArgumentParser((ModelArguments, DataTrainingArguments, ZHTrainingArguments))
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         # If we pass only one argument to the script and it's the path to a json file,
         # let's parse it to get our arguments.
         model_args, data_args, training_args = parser.parse_json_file(json_file=os.path.abspath(sys.argv[1]))
     else:
         model_args, data_args, training_args = parser.parse_args_into_dataclasses()
-        
 
     # Detecting last checkpoint.
     last_checkpoint = None
@@ -223,8 +227,8 @@ def main():
     if training_args.do_eval:
         eval_dataset = xfund_dataset(data_args, tokenizer, 'eval')
 
-        model = LayoutLMv3Model.from_pretrained(
-        #model = AutoModelForTokenClassification.from_pretrained(
+
+    model = AutoModelForTokenClassification.from_pretrained(
         model_args.model_name_or_path,
         from_tf=bool(".ckpt" in model_args.model_name_or_path),
         config=config,

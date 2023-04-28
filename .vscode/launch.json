@@ -14,6 +14,32 @@
             "justMyCode": false
         },
         {
+          "name": "Python: LayoutLM-v3",
+          "type": "python",
+          "request": "launch",
+          "program": "${file}",
+          "console": "integratedTerminal",
+          "justMyCode": false,
+          "cwd": "${workspaceFolder}",
+          "args":[
+              "--data_dir","data",
+              "--language","zh",
+              "--do_eval",
+              "--model_name_or_path","~/ms/layoutlmv3-base-chinese",
+              "--overwrite_output_dir","True","--output_dir","output",
+              "--segment_level_layout", "1",
+              "--visual_embed","1","--input_size","224",
+              "--max_steps","1000",
+              "--save_steps","-1", "--evaluation_strategy","steps","--eval_steps" ,"20",
+              "--learning_rate","7e-5", "--per_device_train_batch_size", "2", "--gradient_accumulation_steps", "1" ,
+              "--dataloader_num_workers", "1"
+          ],
+          "env": {
+              "PYTHONPATH": "${workspaceFolder}/layoutlmv3"
+          }
+          
+      },
+        {
             "name": "attach debug",
             "type": "python",
             "request": "attach",
