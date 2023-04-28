@@ -38,6 +38,7 @@ from ditod import MyDetectionCheckpointer, ICDAREvaluator
 from ditod import MyTrainer,DefaultPredictor
 from PIL import Image
 import numpy as np
+from detectron2.evaluation.coco_evaluation import instances_to_coco_json
 def setup(args):
     """
     Create configs and perform basic setups.
@@ -92,8 +93,9 @@ def main(args):
 
     model = DefaultPredictor(cfg)
     res=model(image)
-    
-    return res
+    ret_res=instances_to_coco_json(res["instances"],image_path)
+    print(ret_res)
+    return ret_res
 
 
 
