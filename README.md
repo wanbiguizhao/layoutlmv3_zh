@@ -3,12 +3,12 @@ layoutlmv3 在中文文档上的应用
 
 # 安装环境
 ```
-conda create -n lv3 python=3.10
+conda create --name lv3 python=3.9 -y
 conda activate lv3
-## 下载transform库，方便本地调试
-git clone https://github.com/huggingface/transformers.git
-cd transformers
-pip install -e .
+pip install -r requirements.txt
+pip install torch==1.10.0+cu111 torchvision==0.11.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+pip install detectron2 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu111/torch1.10/index.html
+
 ```
 
 

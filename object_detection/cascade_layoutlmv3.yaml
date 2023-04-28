@@ -1,6 +1,6 @@
 MODEL:
-  DEVICE: "cuda"
-  MASK_ON: True
+  DEVICE: "cpu"
+  MASK_ON: False
   IMAGE_ONLY: True
   META_ARCHITECTURE: "VLGeneralizedRCNN"
   PIXEL_MEAN: [ 127.5, 127.5, 127.5 ]
