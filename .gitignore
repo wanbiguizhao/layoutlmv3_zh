@@ -165,3 +165,5 @@ output
 data
 tmp
 *object_detection/output
+
+label*

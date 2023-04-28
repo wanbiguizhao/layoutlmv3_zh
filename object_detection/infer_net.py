@@ -10,6 +10,7 @@
 Detection Training Script for MPViT.
 """
 
+import json
 import os
 import itertools
 
@@ -36,6 +37,7 @@ import weakref
 from detectron2.engine.train_loop import AMPTrainer, SimpleTrainer
 from ditod import MyDetectionCheckpointer, ICDAREvaluator
 from ditod import MyTrainer,DefaultPredictor
+from detectron2.structures import  BoxMode
 from PIL import Image
 import numpy as np
 from detectron2.evaluation.coco_evaluation import instances_to_coco_json
@@ -51,7 +53,64 @@ def setup(args):
     cfg.freeze()
     default_setup(cfg, args)
     return cfg
-
+def parser_instance(instances,img_width,img_height):
+    category_id_maping=[
+                    {
+                    "supercategory": "",
+                    "id": 1,
+                    "name": "Text"
+                    },
+                    {
+                    "supercategory": "",
+                    "id": 2,
+                    "name": "Title"
+                    },
+                    {
+                    "supercategory": "",
+                    "id": 3,
+                    "name": "List"
+                    },
+                    {
+                    "supercategory": "",
+                    "id": 4,
+                    "name": "Table"
+                    },
+                    {
+                    "supercategory": "",
+                    "id": 5,
+                    "name": "Figure"
+                    }
+            ]
+    num_instance = len(instances)
+    if num_instance == 0:
+        return []
+    boxes = instances.pred_boxes.tensor.numpy()
+    boxes = BoxMode.convert(boxes, BoxMode.XYXY_ABS, BoxMode.XYWH_ABS)
+    boxes = boxes.tolist()
+    scores = instances.scores.tolist()
+    classes = instances.pred_classes.tolist()
+    results=[]
+    for k in range(num_instance):
+        output_label=category_id_maping[classes[k]-1]["name"]
+        bbox=boxes[k]
+        x, y, width, heigh = bbox[:4]
+        result = {
+            'from_name': "label",
+            'to_name': "image",
+            'type': 'rectanglelabels',
+            "value":{
+                'rectanglelabels': [output_label],
+                'x': float(x) / img_width * 100,
+                'y': float(y) / img_height * 100,
+                'width': float(width) / img_width * 100,
+                'height': float(heigh) / img_height * 100
+            },
+            "score": scores[k],
+        }
+        results.append(
+            result
+        )
+    return results
 
 def main(args):
     cfg = setup(args)
@@ -89,12 +148,13 @@ def main(args):
 
     image_path=args.input
     original_image=Image.open(image_path)
+    img_width,img_height=original_image.width,original_image.height
     image = np.asarray(original_image)
 
     model = DefaultPredictor(cfg)
     res=model(image)
-    ret_res=instances_to_coco_json(res["instances"],image_path)
-    print(ret_res)
+    ret_res=parser_instance(res["instances"],img_width,img_height)
+    print(json.dumps(ret_res,indent=2))
     return ret_res
 
 
@@ -124,4 +184,4 @@ if __name__ == "__main__":
         args=(args,),
     )
 #python train_net.py --config-file cascade_layoutlmv3.yaml --eval-only --num-gpus 0 MODEL.WEIGHTS ~/ms/layoutlmv3-base-finetuned-publaynet/model_final.pth OUTPUT_DIR output PUBLAYNET_DATA_DIR_TEST /media/liukun/7764-4284/ai/publaynet/val
-#python demo.py --config-file ~/ms/layoutlmv3/examples/object_detection/cascade_layoutlmv3.yaml --input /media/liukun/7764-4284/ai/publaynet/val/PMC3335537_00001.jpg  --opts MODEL.WEIGHTS ~/ms/layoutlmv3-base-finetuned-publaynet/model_final.pth 
+#  python object_detection/infer_net.py --config-file ~/ms/layoutlmv3_zh/object_detection/cascade_layoutlmv3.yaml --input /media/liukun/7764-4284/ai/publaynet/val/PMC3335537_00001.jpg   MODEL.WEIGHTS ~/ms/layoutlmv3-base-finetuned-publaynet/model_final.pth  OUTPUT_DIR output
