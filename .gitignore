@@ -161,7 +161,7 @@ cython_debug/
 
 transformers*
 
-
+output
 data
 tmp
 *object_detection/output
