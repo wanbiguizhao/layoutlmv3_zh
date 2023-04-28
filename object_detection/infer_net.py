@@ -110,7 +110,11 @@ def parser_instance(instances,img_width,img_height):
         results.append(
             result
         )
-    return results
+    avg_score=sum(scores)/max(1.0,len(scores)) 
+    return [{
+            'result': results,
+            'score': avg_score
+        }]
 
 def main(args):
     cfg = setup(args)

@@ -56,12 +56,12 @@ class MyModel(LabelStudioMLBase):
         image_url = task['data'].get(self.value) or task['data'].get(DATA_UNDEFINED_NAME)
         return image_url
 
-    def parser_instance(self,instances):
+    def parser_instance(self,instances,img_width,img_height):
         num_instance = len(instances)
         if num_instance == 0:
             return []
         boxes = instances.pred_boxes.tensor.numpy()
-        boxes = BoxMode.convert(boxes, BoxMode.XYXY_ABS, BoxMode.XYWH_REL)
+        boxes = BoxMode.convert(boxes, BoxMode.XYXY_ABS, BoxMode.XYWH_ABS)
         boxes = boxes.tolist()
         scores = instances.scores.tolist()
         classes = instances.pred_classes.tolist()
@@ -69,6 +69,7 @@ class MyModel(LabelStudioMLBase):
         for k in range(num_instance):
             output_label=self.category_id_maping[classes[k]-1]["name"]
             bbox=boxes[k]
+            x, y, width, heigh = bbox[:4]
             result = {
                 'from_name': "label",
                 'to_name': "image",
@@ -77,17 +78,20 @@ class MyModel(LabelStudioMLBase):
                     'rectanglelabels': [output_label],
                     'x': float(x) / img_width * 100,
                     'y': float(y) / img_height * 100,
-                    'width': (float(xmax) - float(x)) / img_width * 100,
-                    'height': (float(ymax) - float(y)) / img_height * 100
+                    'width': float(width) / img_width * 100,
+                    'height': float(heigh) / img_height * 100
                 },
-                "image_id": img_id,
-                "category_id": classes[k],
-                "bbox": boxes[k],
                 "score": scores[k],
             }
             results.append(
                 result
             )
+        avg_score=sum(scores)/max(1.0,len(scores)) 
+        return [{
+                'result': results,
+                'score': avg_score
+            }]
+
     def predict(self, tasks, **kwargs):
         """ This is where inference happens:
             model returns the list of predictions based on input list of tasks
@@ -101,13 +105,11 @@ class MyModel(LabelStudioMLBase):
         image_url = self._get_image_url(task)
         image_path = self.get_local_path(image_url)
         original_image=Image.open(image_path)
+        img_width,img_height=original_image.width,original_image.height
         image = np.asarray(original_image)
         res=self.model(image)
-        output_prediction=self.parser_instance(res["instances"],image_path)
-        
+        output_prediction=self.parser_instance(res["instances"],img_width,img_height)
         print(f'Return output prediction: {json.dumps(output_prediction, indent=2)}')
-        output_prediction = []
-
         # 需要做标签映射
         # 
         return output_prediction
