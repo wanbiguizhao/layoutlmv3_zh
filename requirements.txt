@@ -1,6 +1,11 @@
-# datasets==1.15.1
-# transformers==4.12.5
-# seqeval==1.2.2
+#https://github.com/huggingface/datasets/issues/4117#issuecomment-1192131145
+datasets==2.3.2
+evaluate==0.1.2
+huggingface-hub==0.8.1
+response==0.5.0
+tokenizers==0.10.1
+transformers==4.12.5
+seqeval==1.2.2
 deepspeed==0.5.7
 tensorboard==2.7.0
 seqeval==1.2.2
@@ -10,3 +15,5 @@ Pillow
 einops
 textdistance
 shapely
+setuptools==59.5.0
+protobuf==3.20
