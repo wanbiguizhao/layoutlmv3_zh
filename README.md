@@ -27,3 +27,4 @@ colab 训练命令
 ```
 
 colab 16G的T4 GPU，目前只能训练batch_size 为2的情况，GPU占用13.1G，需要看一下混合精度训练和多卡多机训练。
+AMP.enable 本身就是fp16混合精度计算了。
