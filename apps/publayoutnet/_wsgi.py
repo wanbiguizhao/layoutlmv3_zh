@@ -133,11 +133,16 @@ if __name__ == "__main__":
     )
 
     app.run(host=args.host, port=args.port, debug=args.debug)
-
 else:
     # for uWSGI use
+    from detectron2.engine import default_argument_parser
+    # 需要再测试
+    parser = default_argument_parser()
+    args = parser.parse_args()
+    cfg = setup_obejct_detection_config(args)
     app = init_app(
         model_class=PublayoutnetModel,
+        cfg=cfg,
         model_dir=os.environ.get('MODEL_DIR', os.path.dirname(__file__)),
         redis_queue=os.environ.get('RQ_QUEUE_NAME', 'default'),
         redis_host=os.environ.get('REDIS_HOST', 'localhost'),
