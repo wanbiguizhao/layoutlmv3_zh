@@ -28,3 +28,14 @@ colab 训练命令
 
 colab 16G的T4 GPU，目前只能训练batch_size 为2的情况，GPU占用13.1G，需要看一下混合精度训练和多卡多机训练。
 AMP.enable 本身就是fp16混合精度计算了。
+
+支持断点训练，现在的问题是，为什么现在的训练一半输出的是.pth 但是官方提供的确实一个bin文件，没有办法和publayout的模型统一起来。
+``` bash
+!/usr/local/envs/layoutlmv3/bin/python3 examples/object_detection/train_net.py  --resume --config-file /content/layoutlmv3/examples/object_detection/cascade_layoutlmv3.yaml   --num-gpus 1 MODEL.WEIGHTS /content/layoutlmv3-base-chinese/pytorch_model.bin   OUTPUT_DIR output PUBLAYNET_DATA_DIR_TRAIN /content/drive/MyDrive/layoutlmv3/data/images PUBLAYNET_DATA_DIR_TEST /content/drive/MyDrive/layoutlmv3/data/images
+
+```
+
+我觉的可能是跟代码有关系，把模型名称替换成model_final.pth就可以运行了。
+把AMP.enable关了之后，GPU占用13.4G，可能是batch_size设置为2，所以减少的GPU显存300M有限。
+
+双精度loss比单精度，loss收敛的快一些。
