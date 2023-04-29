@@ -16,14 +16,18 @@ LABEL_STUDIO_HOST = os.getenv('LABEL_STUDIO_HOST', 'http://localhost:8080')
 LABEL_STUDIO_API_KEY = os.getenv('LABEL_STUDIO_API_KEY', 'bf45ee964022f05fa2c4d025a719a9aedf4a8d2f')
 
 
-class MyModel(LabelStudioMLBase):
+class PublayoutnetModel(LabelStudioMLBase):
     """This simple Label Studio ML backend demonstrates training & inference steps with a simple scenario:
     on training: it gets the latest created annotation and stores it as "prediction model" artifact
     on inference: it returns the latest annotation as a pre-annotation for every incoming task
 
     When connected to Label Studio, this is a simple repeater model that repeats your last action on a new task
     """
-    def __init__(self, cfg, score_threshold=0.5, device='cpu', **kwargs):
+    def __init__(self,cfg, config_file=None,
+                 checkpoint_file=None,
+                 image_dir=None,
+                 labels_file=None, score_threshold=0.5, device='cpu', **kwargs):
+        super(PublayoutnetModel, self).__init__(**kwargs)
         self.category_id_maping=[
                     {
                     "supercategory": "",
@@ -52,6 +56,52 @@ class MyModel(LabelStudioMLBase):
                     }
         ]
         self.model=DefaultPredictor(cfg)
+        self.parsed_label_config={
+        "label": {
+          "type": "RectangleLabels",
+          "to_name": [
+            "image"
+          ],
+          "inputs": [
+            {
+              "type": "Image",
+              "value": "image"
+            }
+          ],
+          "labels": [
+            "Title",
+            "Text",
+            "Table",
+            "List",
+            "Figure"
+          ],
+          "labels_attrs": {
+            "Title": {
+              "value": "Title",
+              "background": "green"
+            },
+            "Text": {
+              "value": "Text",
+              "background": "#FFA39E"
+            },
+            "Table": {
+              "value": "Table",
+              "background": "#0040ff"
+            },
+            "List": {
+              "value": "List",
+              "background": "#ff9500"
+            },
+            "Figure": {
+              "value": "Figure",
+              "background": "#AD8B00"
+            }
+          }
+        }
+      }
+        self.from_name, self.to_name, self.value, self.labels_in_config = get_single_tag_keys(
+            self.parsed_label_config, 'RectangleLabels', 'Image')
+        print(self.labels_in_config)
     def _get_image_url(self, task):
         image_url = task['data'].get(self.value) or task['data'].get(DATA_UNDEFINED_NAME)
         return image_url
@@ -67,7 +117,8 @@ class MyModel(LabelStudioMLBase):
         classes = instances.pred_classes.tolist()
         results=[]
         for k in range(num_instance):
-            output_label=self.category_id_maping[classes[k]-1]["name"]
+            print(classes[k])
+            output_label=self.category_id_maping[classes[k]]["name"]
             bbox=boxes[k]
             x, y, width, heigh = bbox[:4]
             result = {
@@ -75,6 +126,7 @@ class MyModel(LabelStudioMLBase):
                 'to_name': "image",
                 'type': 'rectanglelabels',
                 "value":{
+                    "origin_bbox": bbox[:4],
                     'rectanglelabels': [output_label],
                     'x': float(x) / img_width * 100,
                     'y': float(y) / img_height * 100,
