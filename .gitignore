@@ -167,3 +167,4 @@ tmp
 *object_detection/output
 
 label*
+apps/*/apps*

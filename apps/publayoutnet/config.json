@@ -1,0 +1,5 @@
+{
+    "config-file": "~/ms/layoutlmv3_zh/object_detection/cascade_layoutlmv3.yaml",
+    "MODEL.WEIGHTS":"~/ms/layoutlmv3-base-finetuned-publaynet/model_final.pth", 
+    "OUTPUT_DIR":"output"
+}
