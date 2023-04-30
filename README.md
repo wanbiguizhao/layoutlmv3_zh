@@ -48,4 +48,20 @@ python object_detection/train_net.py --config-file object_detection/cascade_layo
 |:-----------|:-------|:-----------|:-------|:-----------|:--------|
 | LU_Text    | 53.791 | RD_Text    | 52.405 | Table      | 100.000 |
 | Text       | 76.165 | Title      | 75.259 | Title_info | 0.000   |
+-------------------
+最新的表格
+[04/30 15:48:55 d2.evaluation.coco_evaluation]: Evaluation results for bbox: 
+|   AP   |  AP50  |  AP75  |  APs  |  APm   |  APl   |
+|:------:|:------:|:------:|:-----:|:------:|:------:|
+| 55.083 | 78.944 | 58.104 |  nan  | 42.471 | 64.024 |
+[04/30 15:48:55 d2.evaluation.coco_evaluation]: Some metrics cannot be computed and is shown as NaN.
+[04/30 15:48:55 d2.evaluation.coco_evaluation]: Per-category bbox AP: 
+| category   | AP     | category   | AP     | category   | AP      |
+|:-----------|:-------|:-----------|:-------|:-----------|:--------|
+| LU_Text    | 20.000 | RD_Text    | nan    | Table      | 100.000 |
+| Text       | 77.051 | Title      | 78.363 | Title_info | 0.000   |
 
+### 感想
+目前大概标注了130+的图片，1000+的数据，最开始使用layoutlmv3-base-chinese，进行训练时，ap前1000step的训练AP不超过2，大模型的训练，
+需要思考的模型，如果fintune的情况下，大模型训练需要多少样本才能达到比较好的效果？
+500M的模型文件，需要多少GPU资源才能够很好的进行训练。
