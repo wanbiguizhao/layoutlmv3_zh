@@ -4,6 +4,8 @@ import argparse
 import logging
 import logging.config
 
+from object_detection.ditod.mytrainer import DefaultPredictor
+
 
 
 logging.config.dictConfig({
@@ -121,10 +123,10 @@ if __name__ == "__main__":
     if args.check:
         print('Check "' + GovlayoutnetModel.__name__ + '" instance creation..')
         model = GovlayoutnetModel(cfg)
-    
+    model=DefaultPredictor(cfg)
     app = init_app(
         model_class=GovlayoutnetModel,
-        cfg=cfg,
+        model=model,
         model_dir=os.environ.get('MODEL_DIR', args.model_dir),
         redis_queue=os.environ.get('RQ_QUEUE_NAME', 'default'),
         redis_host=os.environ.get('REDIS_HOST', 'localhost'),

@@ -23,7 +23,7 @@ class GovlayoutnetModel(LabelStudioMLBase):
 
     When connected to Label Studio, this is a simple repeater model that repeats your last action on a new task
     """
-    def __init__(self,cfg, config_file=None,
+    def __init__(self,model, config_file=None,
                  checkpoint_file=None,
                  image_dir=None,
                  labels_file=None, score_threshold=0.5, device='cpu', **kwargs):
@@ -54,7 +54,7 @@ class GovlayoutnetModel(LabelStudioMLBase):
                               "name": "Title_info"
                             }
                           ]
-        self.model=DefaultPredictor(cfg)
+        self.model=model#DefaultPredictor(cfg)
       #   self.parsed_label_config={
       #   "label": {
       #     "type": "RectangleLabels",
