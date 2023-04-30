@@ -39,3 +39,13 @@ AMP.enable 本身就是fp16混合精度计算了。
 把AMP.enable关了之后，GPU占用13.4G，可能是batch_size设置为2，所以减少的GPU显存300M有限。
 
 双精度loss比单精度，loss收敛的快一些。
+
+## 2023-04-30
+auto-dl进行训练，训练命令
+python object_detection/train_net.py --config-file object_detection/cascade_layoutlmv3.yaml   --num-gpus 1 OUTPUT_DIR output MODEL.WEIGHTS /root/mydata/layoutlmv3 PUBLAYNET_DATA_DIR_TRAIN /root/mydata/label-studio/data/train PUBLAYNET_DATA_DIR_TEST /root/mydata/label-studio/data/val 
+24G的内存上，batch_size也只能设置为3，是采用中文的预训练模型还是基于应该的publayoutnet的训练模型，在训练的过程中，突然想到了，document layout analysis是完全基于视觉的模型，没有text embedding，所以训练一个小时候，替换成了publayout的预训练模型作为基础进行训练，目前看比完全基于中文的预训练模型，效果好的非常大。
+| category   | AP     | category   | AP     | category   | AP      |
+|:-----------|:-------|:-----------|:-------|:-----------|:--------|
+| LU_Text    | 53.791 | RD_Text    | 52.405 | Table      | 100.000 |
+| Text       | 76.165 | Title      | 75.259 | Title_info | 0.000   |
+
