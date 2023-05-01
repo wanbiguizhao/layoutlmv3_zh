@@ -53,7 +53,7 @@ def parser_instance(instances,img_width,img_height):
     num_instance = len(instances)
     if num_instance == 0:
         return []
-    boxes = instances.pred_boxes.tensor.numpy()
+    boxes = instances.pred_boxes.tensor.cpu().numpy()
     boxes = BoxMode.convert(boxes, BoxMode.XYXY_ABS, BoxMode.XYWH_ABS)
     boxes = boxes.tolist()
     scores = instances.scores.tolist()
