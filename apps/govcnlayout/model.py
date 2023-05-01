@@ -153,8 +153,19 @@ class GovlayoutnetModel(LabelStudioMLBase):
         """
         # self.train_output is a dict that stores the latest result returned by fit() method
         assert len(tasks) == 1
-        from_name, schema = list(self.parsed_label_config.items())[0]
         task = tasks[0]
+        if True:
+            #do some hack
+            base_path=os.path.dirname(os.path.realpath(__file__))
+            with open(f"{base_path}/tmp/prediction_tasks.json","r") as cache_fs:
+                cache_data=json.load(cache_fs)
+                task["id"]
+                for data in cache_data:
+                    if data["id"]==task["id"]:
+                        return data["predictions"]
+
+        from_name, schema = list(self.parsed_label_config.items())[0]
+        
         print(task)
         print(kwargs)
         
