@@ -61,6 +61,12 @@ python object_detection/train_net.py --config-file object_detection/cascade_layo
 | LU_Text    | 20.000 | RD_Text    | nan    | Table      | 100.000 |
 | Text       | 77.051 | Title      | 78.363 | Title_info | 0.000   |
 
+
+python object_detection/train_net.py --config-file object_detection/cascade_layoutlmv3.yaml   --num-gpus 1 OUTPUT_DIR output MODEL.WEIGHTS /root/mydata/layoutlmv3 PUBLAYNET_DATA_DIR_TRAIN /root/mydata/label-studio/data/train PUBLAYNET_DATA_DIR_TEST /root/mydata/label-studio/data/val 
+
+
+python object_detection/train_net.py --config-file object_detection/cascade_layoutlmv3.yaml   --num-gpus 1 OUTPUT_DIR /root/autodl-fs/output MODEL.WEIGHTS /root/autodl-fs/layoutlmv3-base-finetuned-publaynet/model_final.pth PUBLAYNET_DATA_DIR_TRAIN /root/mydata/data/train PUBLAYNET_DATA_DIR_TEST /root/mydata/data/val 
+
 ### 感想
 目前大概标注了130+的图片，1000+的数据，最开始使用layoutlmv3-base-chinese，进行训练时，ap前1000step的训练AP不超过2，大模型的训练，
 需要思考的模型，如果fintune的情况下，大模型训练需要多少样本才能达到比较好的效果？

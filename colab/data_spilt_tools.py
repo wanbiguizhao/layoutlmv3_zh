@@ -29,7 +29,7 @@ def makedir(dir_path):
     if os.path.exists(dir_path):
         shutil.rmtree(dir_path)
     os.makedirs(dir_path)
-def make_train_val(export_data_dir,train_per=0.7):
+def make_train_val(export_data_dir,train_per=0.85):
     #对数据进行分割成train和val数据
     # 按照图片进行进行划分。
     assert  os.path.exists(export_data_dir)
@@ -81,5 +81,6 @@ def make_train_val(export_data_dir,train_per=0.7):
 
 
 if __name__ == "__main__":
-    convert_label_studio_to_coco("tmp/label-studio/data")
-    make_train_val("tmp/label-studio/data")
+    data_dir="tmp/label-studio/data-0430"
+    convert_label_studio_to_coco(data_dir)
+    make_train_val(data_dir)
