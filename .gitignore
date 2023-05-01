@@ -166,5 +166,5 @@ data
 tmp
 *object_detection/output
 
-label*
+label*ml
 apps/*/apps*
