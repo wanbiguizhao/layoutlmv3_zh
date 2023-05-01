@@ -76,3 +76,5 @@ python object_detection/train_net.py --config-file object_detection/cascade_layo
 标题下面对于标题的解释信息，或者说副标题，预测中根本没有出现。肯定不是目标太小了，因为有时候可以被识别为text或者title。数据量也不是不够？
 需要做的事情是，如何增加数据的权重？在数据集里面加倍一些数据。
 
+预测错位的分析：
+1. A，B两个区域，B预测的区域是A的子集，并且AB预测的类别一样，这种情况下，可以在工程上进行优化掉。
