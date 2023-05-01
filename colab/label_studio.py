@@ -40,9 +40,12 @@ tasks_data=project.get_tasks(
     )
 with open(f"{CURRENT_DIR}/data/tasks.json","w") as taskf:
     json.dump(tasks_data,taskf)
+shutil.rmtree(f"{CURRENT_DIR}/data/images/")
+os.makedirs(f"{CURRENT_DIR}/data/images/")
 for task in tasks_data:
     response=label_studio_client.make_request("GET",f'{task["data"]["image"]}')
     image_name=task["data"]["image"].split("/")[-1]
+
     with open(f"{CURRENT_DIR}/data/images/{image_name}", 'wb') as file:
         file.write(response.content)
     print(f'{task["data"]["image"]},{task["id"]}')
