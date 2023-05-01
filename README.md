@@ -71,3 +71,8 @@ python object_detection/train_net.py --config-file object_detection/cascade_layo
 目前大概标注了130+的图片，1000+的数据，最开始使用layoutlmv3-base-chinese，进行训练时，ap前1000step的训练AP不超过2，大模型的训练，
 需要思考的模型，如果fintune的情况下，大模型训练需要多少样本才能达到比较好的效果？
 500M的模型文件，需要多少GPU资源才能够很好的进行训练。
+
+# 2023-05-01 
+标题下面对于标题的解释信息，或者说副标题，预测中根本没有出现。肯定不是目标太小了，因为有时候可以被识别为text或者title。数据量也不是不够？
+需要做的事情是，如何增加数据的权重？在数据集里面加倍一些数据。
+
