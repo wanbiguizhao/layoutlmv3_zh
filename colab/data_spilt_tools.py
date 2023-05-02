@@ -5,6 +5,7 @@ import json
 # 用于对数据分割的工具。
 from sklearn.model_selection import train_test_split
 import shutil
+from glob import glob
 PROJECT_DIR= os.path.dirname(__file__)
 DATA_DIR=os.path.join(PROJECT_DIR,'Data')
 
@@ -12,7 +13,28 @@ DATA_DIR=os.path.join(PROJECT_DIR,'Data')
 
 def merge_tasks_json(export_data_dir):
     #标注的文件太多了，从多个项目进行标注，需要从多个项目中导出数据，需要将数据合并，每个导出的项目都是projec开头的
-    pass 
+    ## 合并json数据
+    new_result_data={}
+    for data_json_path in glob(f"{export_data_dir}/project*/result.json"):
+        with open(data_json_path,'r') as df:
+            resutl_data=json.load(df)
+        for k,v in resutl_data.items():
+            if k in ["images","annotations"]:
+                if k not in new_result_data :
+                    new_result_data[k]=[]
+                new_result_data[k].extend(v)
+            else:
+                new_result_data[k]=v 
+    if  new_result_data:
+        dump_json(
+                [
+                    [new_result_data,f"{export_data_dir}/result.json"]
+                ]
+            )
+    ## 合并图片
+    makedir(f"{export_data_dir}/images")
+    for png_path in glob(f"{export_data_dir}/project*/images/*.png"):
+        shutil.copy(png_path,f"{export_data_dir}/images") 
 def convert_label_studio_to_coco(export_data_dir):
     # 把label-studio导出数据的个格式，转化为coco数据格式，主要是json中路径的修改。
     image_dir=os.path.join(export_data_dir,"images")
@@ -86,6 +108,7 @@ def make_train_val(export_data_dir,train_per=0.85):
 
 
 if __name__ == "__main__":
-    data_dir="tmp/label-studio/data-0501"
+    data_dir="tmp/label-studio/data-0502"
+    merge_tasks_json(data_dir)
     convert_label_studio_to_coco(data_dir)
     make_train_val(data_dir)
