@@ -81,6 +81,6 @@ def make_train_val(export_data_dir,train_per=0.85):
 
 
 if __name__ == "__main__":
-    data_dir="tmp/label-studio/data-0430"
+    data_dir="tmp/label-studio/data-0501"
     convert_label_studio_to_coco(data_dir)
     make_train_val(data_dir)

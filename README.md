@@ -81,4 +81,34 @@ python object_detection/train_net.py --config-file object_detection/cascade_layo
 2. 出现了表格的情况，需要翻转90的情况。想到了，如果给模型输入一个表格，模型能给出一些语料吗？这个表格是干什么的？每一列是什么作用？
 
 ## 标注的数据
-目前标注了大概650张图片，之前最好的map大概能达到60，之前的图片是337张图片AP-58，翻一倍的情况下，能提升多少ap？
+目前标注了大概650张图片，之前最好的map大概能达到60，之前的图片是337张图片AP-58，翻一倍的情况下，能提升多少ap？需要考虑的事情：
+1. 多gpu训练。
+2. 是否需要把图片和数据分开打散进行训练？不要，防止训练过程中，训练数据看到测试数据中的图片。
+
+## 训练
+
+把配置文件单独拿出来。
+```
+python object_detection/train_net.py --config-file /root/mydata/config/cascade_layoutlmv3.yaml   --num-gpus 1 OUTPUT_DIR /root/autodl-tmp/output MODEL.WEIGHTS /root/mydata/layoutlmv3-base-finetuned-publaynet/model_final.pth PUBLAYNET_DATA_DIR_TRAIN /root/mydata/data/train PUBLAYNET_DATA_DIR_TEST /root/mydata/data/val 
+```
+
+这次使用了A40进行训练,48G内存，发现batch_size设置为4，发现total_loss 下降的非常快，不到200个step的情况下目前已经到了0.77 ，以前要上万个step之后。
+问题：batch_size造成的，还是数据集多的造成的？我认为是batch_size造成的。因为目前模型还没有看一遍数据。
+
+iter: 199 的数据，目前看来挺好，但是title_info还是没有结果。
+|   AP   |  AP50  |  AP75  |  APs  |  APm   |  APl   |
+|:------:|:------:|:------:|:-----:|:------:|:------:|
+| 50.872 | 64.355 | 57.684 |  nan  | 46.606 | 48.020 |
+[05/02 00:13:44 d2.evaluation.coco_evaluation]: Some metrics cannot be computed and is shown as NaN.
+[05/02 00:13:44 d2.evaluation.coco_evaluation]: Per-category bbox AP: 
+| category   | AP     | category   | AP     | category   | AP     |
+|:-----------|:-------|:-----------|:-------|:-----------|:-------|
+| LU_Text    | 34.841 | RD_Text    | 60.246 | Table      | 44.094 |
+| Text       | 88.649 | Title      | 77.405 | Title_info | 0.000  |
+[05/02 00:13:44 d2.evaluation.testing]: copypaste: Task: bbox
+[05/02 00:13:44 d2.evaluation.testing]: copypaste: AP,AP50,AP75,APs,APm,APl
+[05/02 00:13:44 d2.evaluation.testing]: copypaste: 50.8724,64.3555,57.6841,nan,46.6062,48.0197
+
+# 2023-05-02
+## 训练结果
+使用A40，大概训练了10个小时，loss降到了0.55左右，但是平均AP还是特别的低在55左右。
