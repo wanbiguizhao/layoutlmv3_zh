@@ -8,6 +8,11 @@ import shutil
 PROJECT_DIR= os.path.dirname(__file__)
 DATA_DIR=os.path.join(PROJECT_DIR,'Data')
 
+
+
+def merge_tasks_json(export_data_dir):
+    #标注的文件太多了，从多个项目进行标注，需要从多个项目中导出数据，需要将数据合并，每个导出的项目都是projec开头的
+    pass 
 def convert_label_studio_to_coco(export_data_dir):
     # 把label-studio导出数据的个格式，转化为coco数据格式，主要是json中路径的修改。
     image_dir=os.path.join(export_data_dir,"images")

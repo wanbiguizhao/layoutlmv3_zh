@@ -18,7 +18,7 @@ LABEL_STUDIO_API_KEY = os.getenv('LABEL_STUDIO_API_KEY', 'bf45ee964022f05fa2c4d0
 label_studio_client=client.Client(url=LABEL_STUDIO_HOST,
                                   api_key=LABEL_STUDIO_API_KEY)
 print(label_studio_client.check_connection())
-project=label_studio_client.get_project(id=3)
+project=label_studio_client.get_project(id=4)
 tasks_data=project.get_tasks(
         filters= {
             "conjunction": "and",
