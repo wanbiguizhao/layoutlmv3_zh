@@ -129,11 +129,28 @@ class easyOCRLabeling(LabelStudioMLBase):
                 'image_rotation': 0,
                 'value': {
                     'points': rel_pnt,
+                    'closed':True
                 },
                 'id': id_gen,
-                'from_name': "polygon",
+                'from_name': "poly",
                 'to_name': 'image',
                 'type': 'polygon',
+                'origin': 'manual',
+                'score': score,
+            })
+            results.append({
+                'original_width': img_width,
+                'original_height': img_height,
+                'image_rotation': 0,
+                'value': {
+                    'points': rel_pnt,
+                    'closed':True,
+                    "labels":["Text"]
+                },
+                'id': id_gen,
+                'from_name': "label",
+                'to_name': 'image',
+                'type': 'labels',
                 'origin': 'manual',
                 'score': score,
             })
@@ -144,10 +161,8 @@ class easyOCRLabeling(LabelStudioMLBase):
                 'image_rotation': 0,
                 'value': {
                     'points': rel_pnt,
-                    'labels': [output_label],
-                    "text": [
-                        poly[1]
-                    ]
+                    'closed':True,                   
+                    "text": [poly[1]]
                 },
                 'id': id_gen,
                 'from_name': "transcription",
