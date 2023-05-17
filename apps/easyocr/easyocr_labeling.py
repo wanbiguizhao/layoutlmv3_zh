@@ -24,8 +24,8 @@ class easyOCRLabeling(LabelStudioMLBase):
                  lang_list=None,
                  image_dir=None,
                  labels_file=None,
-                 score_threshold=0.3,
-                 device='cuda',
+                 score_threshold=0.005,
+                 device='cpu',
                  **kwargs):
         """
         Optionally set mappings from COCO classes to target labels
@@ -95,13 +95,14 @@ class easyOCRLabeling(LabelStudioMLBase):
 
     def predict(self, tasks, **kwargs):
         # assert len(tasks) == 1  # this affects the retrieve predictions function to auto predict all tasks
-        print(tasks)
+        #print(tasks)
         task = tasks[0]
         image_url = self._get_image_url(task)
         image_path = self.get_local_path(image_url)
         model_results = self.model.readtext(image_path, height_ths=0.8)
         results = []
         all_scores = []
+        print(model_results)
         img_width, img_height = get_image_size(image_path)
         if not model_results:
             return
@@ -157,6 +158,7 @@ class easyOCRLabeling(LabelStudioMLBase):
             })
             all_scores.append(score)
         avg_score = sum(all_scores) / max(len(all_scores), 1)
+        print(results)
         return [{
             'result': results,
             'score': avg_score
