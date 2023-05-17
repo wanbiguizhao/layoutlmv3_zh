@@ -116,25 +116,32 @@ class easyOCRLabeling(LabelStudioMLBase):
 
             # convert the points array from image absolute dimensions to relative dimensions
             rel_pnt = []
+            if len(poly[0])!=4:
+                continue 
+            lu,ru,ld,rd=poly[0][0],poly[0][1],poly[0][2],poly[0][3]
+            w,h=ru[0]-lu[0],ld[1]-lu[1]
             for rp in poly[0]:
                 if rp[0] > img_width or rp[1] > img_height:
                     continue
                 rel_pnt.append([(rp[0] / img_width) * 100, (rp[1] / img_height) * 100])
 
             # must add one for the polygon
-            id_gen = random.randrange(10**10)
+            id_gen = str(random.randrange(10**10))
             results.append({
                 'original_width': img_width,
                 'original_height': img_height,
                 'image_rotation': 0,
                 'value': {
-                    'points': rel_pnt,
-                    'closed':True
+                    'x': (lu[0]/img_width)*100,
+                    'y': (lu[1]/img_height)*100,
+                    "width": (w/img_width)*100,
+                    "height": (h/img_height)*100,
+                    "rotation": 0
                 },
                 'id': id_gen,
-                'from_name': "poly",
+                'from_name': "bbox",
                 'to_name': 'image',
-                'type': 'polygon',
+                'type': 'rectangle',
                 'origin': 'manual',
                 'score': score,
             })
@@ -143,15 +150,17 @@ class easyOCRLabeling(LabelStudioMLBase):
                 'original_height': img_height,
                 'image_rotation': 0,
                 'value': {
-                    'points': rel_pnt,
-                    'closed':True,
+                    'x': (lu[0]/img_width)*100,
+                    'y': (lu[1]/img_height)*100,
+                    "width": (w/img_width)*100,
+                    "height": (h/img_height)*100,
+                    "rotation": 0, 
                     "labels":["Text"]
                 },
                 'id': id_gen,
                 'from_name': "label",
                 'to_name': 'image',
                 'type': 'labels',
-                'origin': 'manual',
                 'score': score,
             })
             # and one for the transcription
@@ -160,8 +169,11 @@ class easyOCRLabeling(LabelStudioMLBase):
                 'original_height': img_height,
                 'image_rotation': 0,
                 'value': {
-                    'points': rel_pnt,
-                    'closed':True,                   
+                    'x': (lu[0]/img_width)*100,
+                    'y': (lu[1]/img_height)*100,
+                    "width": (w/img_width)*100,
+                    "height": (h/img_height)*100,
+                    "rotation": 0,                   
                     "text": [poly[1]]
                 },
                 'id': id_gen,
